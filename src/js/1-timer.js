@@ -94,7 +94,7 @@ btnStart.addEventListener('click', () => {
 
     updatingTimerUi({ days, hours, minutes, seconds });
 
-    if ((days, hours, minutes, seconds === '00')) {
+    if ((days && hours && minutes && seconds === '00')) {
       stopInterval(idInterval);
       return;
     }
