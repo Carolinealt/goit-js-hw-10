@@ -5,59 +5,50 @@ const refs = {
   form: document.querySelector('form'),
   inputDelay: document.querySelector('[name="delay"]'),
   inputRadio: document.querySelector('[name="state"]'),
-  btnSubmit: document.querySelector('[type="button"]'),
 };
-const { form, inputDelay, inputRadio, btnSubmit } = refs;
+const { form, inputDelay, inputRadio } = refs;
 let valueRadio = null;
-let delayValue = null;
+
+iziToast.settings({
+  position: 'topRight',
+  messageColor: 'white',
+  messageSize: `20`,
+  icon: '',
+});
 
 function checkRadioValue(radio) {
-  return radio.checked ? true : false;
+  return radio.checked;
 }
 
 const getPromise = ({ userDelay, userRadio }) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (!userRadio) {
-        reject(
-          iziToast.error({
-            message: `❌ Rejected promise in ${userDelay}ms`,
-            position: 'topRight',
-            backgroundColor: '#b31717',
-            messageColor: 'white',
-            messageSize:`20`,
-            icon: '',
-            shadow: false,
-          })
-        );
-      } else
-        resolve(
-          iziToast.show({
-            message: `✅ Fulfilled promise in ${userDelay}ms`,
-            position: 'topRight',
-            backgroundColor: "#31bd3f",
-            messageSize:`20`,
-            messageColor: 'white',
-            shadow: false,
-            icon: '',
-          })
-        );
+        reject(`❌ Rejected promise in ${userDelay}ms`);
+      }
+      resolve(`✅ Fulfilled promise in ${userDelay}ms`);
     }, userDelay);
   });
 };
 
-function handlerPromise(inputRadio, inputDelay) {
+function handlerPromise(inputRadio, valueDelay) {
   valueRadio = checkRadioValue(inputRadio);
-  delayValue = inputDelay * 1000;
-  getPromise({ userDelay: delayValue, userRadio: valueRadio })
+  getPromise({ userDelay: valueDelay, userRadio: valueRadio })
     .then(value => {
-      console.log(value);
+      iziToast.show({
+        message: value,
+        backgroundColor: '#31bd3f',
+      });
     })
     .catch(value => {
-      console.log(value);
+      iziToast.error({
+        message: `${value}`,
+        backgroundColor: '#b31717',
+      });
     });
 }
 
-btnSubmit.addEventListener('click', () => {
+form.addEventListener('submit', e => {
+  e.preventDefault();
   handlerPromise(inputRadio, inputDelay.value);
 });
